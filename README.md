@@ -1,20 +1,24 @@
-# 🚀 n8n Docker Setup
+# 🚀 n8n Docker Setup - 2025 Edition
 
-Production-ready n8n setup with Docker Compose, PostgreSQL, and security best practices.
+Production-ready n8n setup with Docker Compose, PostgreSQL, Redis Queue, and AI-optimized configuration following 2025 best practices.
 
 ## ✨ Features
 
-- 🔒 **Security First**: Basic auth, encryption, secure PostgreSQL
-- 🐳 **Docker Compose**: Easy deployment and management
-- 🗄️ **PostgreSQL**: Reliable database with optimized configuration
-- 📊 **pgAdmin**: Database management interface (development mode)
-- 🔄 **Task Runners**: Enhanced performance for code nodes
-- 💾 **Automated Backups**: Regular backup script with cleanup
-- 🛠️ **Development Tools**: Makefile for easy management
+-   🤖 **AI-Ready**: Optimized for OpenAI, Anthropic, Mistral integrations
+-   ⚡ **Redis Queue**: Scalable workflow execution for heavy AI workloads
+-   🔒 **Security First**: JWT secrets, basic auth, non-root PostgreSQL
+-   🐳 **Docker Compose**: Easy deployment with official 2025 image
+-   🗄️ **PostgreSQL 16**: Non-root user setup with optimized configuration
+-   📊 **pgAdmin**: Database management interface (development mode)
+-   🔄 **Task Runners**: Enhanced performance for code nodes
+-   📁 **Shared Storage**: File sharing between workflows for AI processing
+-   💾 **Automated Backups**: Regular backup script with cleanup
+-   🛠️ **Development Tools**: Makefile for easy management
 
 ## 🚀 Quick Start
 
 ### 1. Initial Setup
+
 ```bash
 # Clone or download this setup
 cd n8n-docker-setup
@@ -28,6 +32,7 @@ cp .env.example .env
 ```
 
 ### 2. Generate Secure Keys
+
 ```bash
 # Generate encryption key
 openssl rand -base64 32
@@ -37,6 +42,7 @@ openssl rand -hex 16
 ```
 
 ### 3. Start n8n
+
 ```bash
 # Start n8n services
 make up
@@ -46,55 +52,104 @@ make dev
 ```
 
 ### 4. Access Applications
-- **n8n Web Interface**: http://localhost:5678
-- **pgAdmin** (dev mode): http://localhost:8080
+
+-   **n8n Web Interface**: http://localhost:5678
+-   **pgAdmin** (dev mode): http://localhost:8080
 
 ## 📋 Available Commands
 
 ```bash
-make help       # Show all available commands
-make up         # Start n8n services
-make down       # Stop services
-make restart    # Restart services
-make logs       # Show live logs
-make backup     # Create backup
-make health     # Check service health
-make dev        # Start with development tools
-make update     # Update to latest version
-make clean      # Remove all data (⚠️ DANGEROUS)
+make help         # Show all available commands
+make up           # Start n8n services
+make down         # Stop services
+make restart      # Restart services
+make logs         # Show live logs
+make backup       # Create backup
+make health       # Check service health
+make dev          # Start with development tools (pgAdmin)
+make queue        # Start with Redis queue (high-scale AI workflows)
+make update       # Update to latest version
+make migrate      # Migrate from old config to 2025
+make clean        # Remove all data (⚠️ DANGEROUS)
 ```
+
+## 🤖 AI Workflow Features
+
+### Redis Queue for Scalable AI
+
+```bash
+# Start with Redis queue for heavy AI workloads
+make queue
+```
+
+**Benefits:**
+
+-   ⚡ Non-blocking AI workflow execution
+-   🔄 Queue management for multiple AI tasks
+-   📈 Better resource utilization
+-   🚀 Scalable to multiple workers
+
+### AI-Ready Configuration
+
+The setup includes optimized settings for AI workflows:
+
+```bash
+# Enhanced settings in .env
+N8N_AI_ENABLED=true
+N8N_PAYLOAD_SIZE_MAX=32          # 32MB for large AI responses
+N8N_WORKFLOW_TIMEOUT=300         # 5min timeout for AI processing
+N8N_CONCURRENCY_PRODUCTION=2     # Concurrent executions
+N8N_FUNCTION_ALLOW_EXTERNAL=*    # Allow external AI libraries
+```
+
+### Supported AI Integrations
+
+Ready for popular AI services:
+
+-   🧠 **OpenAI GPT**: ChatGPT, GPT-4, DALL-E
+-   🤖 **Anthropic Claude**: Claude-3, Claude-2
+-   ⚡ **Mistral AI**: Mixtral, Mistral-7B
+-   🔧 **Custom AI APIs**: Flexible function support
 
 ## 🔧 Configuration
 
 ### Environment Variables (.env)
 
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `POSTGRES_PASSWORD` | Database password | `secure_db_password` |
-| `N8N_BASIC_AUTH_USER` | Admin username | `admin` |
-| `N8N_BASIC_AUTH_PASSWORD` | Admin password | `secure_admin_password` |
-| `N8N_ENCRYPTION_KEY` | Data encryption key | Generate with `openssl rand -base64 32` |
-| `GENERIC_TIMEZONE` | Server timezone | `Asia/Ho_Chi_Minh` |
-| `N8N_LOG_LEVEL` | Logging level | `info` |
+| Variable                         | Description               | Example                                 |
+| -------------------------------- | ------------------------- | --------------------------------------- |
+| `POSTGRES_PASSWORD`              | Database password         | `secure_db_password`                    |
+| `POSTGRES_NON_ROOT_USER`         | Non-root DB user          | `n8n`                                   |
+| `POSTGRES_NON_ROOT_PASSWORD`     | Non-root DB password      | `secure_n8n_password`                   |
+| `N8N_BASIC_AUTH_USER`            | Admin username            | `admin`                                 |
+| `N8N_BASIC_AUTH_PASSWORD`        | Admin password            | `secure_admin_password`                 |
+| `N8N_ENCRYPTION_KEY`             | Data encryption key       | Generate with `openssl rand -base64 32` |
+| `N8N_USER_MANAGEMENT_JWT_SECRET` | JWT secret (2025 feature) | Generate with `openssl rand -base64 32` |
+| `GENERIC_TIMEZONE`               | Server timezone           | `Asia/Ho_Chi_Minh`                      |
+| `N8N_LOG_LEVEL`                  | Logging level             | `info`                                  |
+| `N8N_AI_OPENAI_API_KEY`          | OpenAI API key (optional) | `sk-...`                                |
+| `N8N_AI_ANTHROPIC_API_KEY`       | Anthropic API key         | `sk-ant-...`                            |
+| `N8N_AI_MISTRAL_API_KEY`         | Mistral API key           | `...`                                   |
 
 ### Security Features
 
-- ✅ Basic authentication enabled
-- ✅ Strong encryption key
-- ✅ PostgreSQL with SCRAM-SHA-256 authentication
-- ✅ Services bound to localhost only
-- ✅ Resource limits configured
-- ✅ Secure logging configuration
+-   ✅ Basic authentication enabled
+-   ✅ Strong encryption key
+-   ✅ PostgreSQL with SCRAM-SHA-256 authentication
+-   ✅ Services bound to localhost only
+-   ✅ Resource limits configured
+-   ✅ Secure logging configuration
 
 ## 💾 Backup & Restore
 
 ### Automatic Backup
+
 ```bash
 # Create backup (includes database and n8n data)
 make backup
 ```
 
 ### Manual Restore
+
 ```bash
 # Stop services
 make down
@@ -112,11 +167,13 @@ make up
 ## 🔍 Monitoring & Maintenance
 
 ### Health Check
+
 ```bash
 make health
 ```
 
 ### View Logs
+
 ```bash
 # Live logs
 make logs
@@ -127,13 +184,15 @@ docker-compose logs -f postgres
 ```
 
 ### Performance Monitoring
-- n8n metrics are enabled (`N8N_METRICS=true`)
-- PostgreSQL logging configured for slow queries
-- Resource limits prevent memory issues
+
+-   n8n metrics are enabled (`N8N_METRICS=true`)
+-   PostgreSQL logging configured for slow queries
+-   Resource limits prevent memory issues
 
 ## 🛠️ Development
 
 ### With pgAdmin
+
 ```bash
 # Start with development tools
 make dev
@@ -144,6 +203,7 @@ make dev
 ```
 
 ### Custom PostgreSQL Configuration
+
 Edit `postgres.conf` to tune database performance for your needs.
 
 ## 📁 Directory Structure
@@ -187,6 +247,7 @@ make update
 ### Common Issues
 
 **Service won't start:**
+
 ```bash
 # Check logs
 make logs
@@ -199,6 +260,7 @@ make clean && make install && make up
 ```
 
 **Database connection issues:**
+
 ```bash
 # Check PostgreSQL logs
 docker-compose logs postgres
@@ -210,6 +272,7 @@ make up
 ```
 
 **Permission issues:**
+
 ```bash
 # Fix permissions
 chmod +x backup.sh
@@ -218,9 +281,9 @@ sudo chown -R $(whoami):$(whoami) n8n_data postgres_data
 
 ## 📞 Support
 
-- [n8n Documentation](https://docs.n8n.io/)
-- [n8n Community Forum](https://community.n8n.io/)
-- [Docker Compose Documentation](https://docs.docker.com/compose/)
+-   [n8n Documentation](https://docs.n8n.io/)
+-   [n8n Community Forum](https://community.n8n.io/)
+-   [Docker Compose Documentation](https://docs.docker.com/compose/)
 
 ## 📄 License
 
