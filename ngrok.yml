@@ -1,0 +1,7 @@
+version: 2
+authtoken: 2yrfLfnUU6IIDTcz5UlfwMO8JJL_7LN1yivdBKeF63DhhRYD7
+tunnels:
+    n8n:
+        addr: n8n:5678
+        proto: http
+        hostname: squid-prepared-strongly.ngrok-free.app

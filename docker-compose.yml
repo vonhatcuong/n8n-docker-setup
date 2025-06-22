@@ -14,7 +14,7 @@ services:
             - POSTGRES_NON_ROOT_PASSWORD
         volumes:
             - db_storage:/var/lib/postgresql/data
-            - ./init-data-2025.sh:/docker-entrypoint-initdb.d/init-data.sh
+            - ./init-data.sh:/docker-entrypoint-initdb.d/init-data.sh
         healthcheck:
             test:
                 [
@@ -37,6 +37,8 @@ services:
         image: docker.n8n.io/n8nio/n8n:latest # Official 2025 image URL
         container_name: n8n_app
         restart: unless-stopped
+        ports:
+            - '5678:5678' # Expose n8n port to host for ngrok
         environment:
             # Database configuration (using non-root user)
             - DB_TYPE=postgresdb
@@ -46,10 +48,10 @@ services:
             - DB_POSTGRESDB_USER=${POSTGRES_NON_ROOT_USER}
             - DB_POSTGRESDB_PASSWORD=${POSTGRES_NON_ROOT_PASSWORD}
 
-            # Core settings
-            - N8N_HOST=localhost
-            - WEBHOOK_URL=http://localhost:5678/
-            - N8N_PROTOCOL=http
+            # Core settings - Updated for ngrok
+            - N8N_HOST=${NGROK_HOSTNAME}
+            - WEBHOOK_URL=${NGROK_PUBLIC_URL}
+            - N8N_PROTOCOL=https
             - NODE_ENV=production
             - GENERIC_TIMEZONE=${GENERIC_TIMEZONE}
 
@@ -68,11 +70,9 @@ services:
             - N8N_PAYLOAD_SIZE_MAX
             - N8N_METRICS
             - N8N_RUNNERS_ENABLED
-            - N8N_SECURE_COOKIE
+            - N8N_SECURE_COOKIE=true # Should be true with https
             - N8N_DISABLE_UI
 
-        ports:
-            - '127.0.0.1:5678:5678' # Bind only to localhost for security
         volumes:
             - n8n_storage:/home/node/.n8n
             - shared_storage:/data/shared # For file sharing between workflows
@@ -129,6 +129,29 @@ services:
             - n8n_network
         profiles:
             - queue
+        logging:
+            driver: 'json-file'
+            options:
+                max-size: '5m'
+                max-file: '2'
+
+    ngrok: # Added ngrok service
+        image: ngrok/ngrok:latest
+        container_name: n8n_ngrok
+        restart: unless-stopped
+        environment:
+            - NGROK_AUTHTOKEN=${NGROK_AUTHTOKEN}
+        command:
+            - 'start'
+            - '--all'
+            - '--config'
+            - '/etc/ngrok.yml'
+        volumes:
+            - ./ngrok.yml:/etc/ngrok.yml
+        depends_on:
+            - n8n
+        networks:
+            - n8n_network
         logging:
             driver: 'json-file'
             options:
